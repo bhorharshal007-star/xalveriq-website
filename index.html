@@ -42,8 +42,8 @@ p{margin:0}
 .btn:hover svg.arr{transform:translateX(3px)}
 .btn-ink{background:var(--ink);border-color:var(--ink);color:#fff}
 .btn-ink:hover{box-shadow:0 10px 24px -10px rgba(15,14,11,.55)}
-.btn-ink::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);animation:shine 3.6s ease-in-out infinite}
-@keyframes shine{0%,60%{left:-60%}100%{left:130%}}
+.btn-ink::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:translateX(0) skewX(-20deg);animation:shine 3.6s ease-in-out infinite;will-change:transform}
+@keyframes shine{0%,60%{transform:translateX(0) skewX(-20deg)}100%{transform:translateX(475%) skewX(-20deg)}}
 .btn-wa{background:var(--wa);border-color:var(--wa);color:#fff}
 .btn-wa .lg{fill:#fff}
 .btn-sm{padding:11px 16px;font-size:14.5px}
@@ -69,8 +69,10 @@ p{margin:0}
 
 /* ---------- hero ---------- */
 .hero{position:relative;padding:136px 0 90px;overflow:hidden;background:var(--bg)}
-.dots{position:absolute;inset:0;background-image:radial-gradient(rgba(15,14,11,.13) 1px,transparent 1.2px);background-size:22px 22px;mask-image:radial-gradient(ellipse 80% 70% at 65% 40%,#000 25%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 80% 70% at 65% 40%,#000 25%,transparent 75%);animation:dotsmove 30s linear infinite}
-@keyframes dotsmove{to{background-position:220px 110px}}
+.dots{position:absolute;inset:0;overflow:hidden;--dot:rgba(15,14,11,.13);mask-image:radial-gradient(ellipse 80% 70% at 65% 40%,#000 25%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 80% 70% at 65% 40%,#000 25%,transparent 75%);}
+.dots::before{content:"";position:absolute;inset:-44px;background-image:radial-gradient(var(--dot) 1px,transparent 1.2px);background-size:22px 22px;animation:dotsT 6s linear infinite;will-change:transform}
+@keyframes dotsT{to{transform:translate(44px,22px)}}
+
 .shapes{position:absolute;inset:0;pointer-events:none}
 .shape{position:absolute}
 .s1{width:38px;top:24%;left:3%;animation:drift 11s ease-in-out infinite}
@@ -104,13 +106,15 @@ p{margin:0}
 
 /* engine */
 .engine-card{position:relative;background:#fff;border:1px solid var(--line);border-radius:22px;padding:14px 14px 0;box-shadow:var(--shadow-lg)}
-.engine-card::before{content:"";position:absolute;inset:-1px;border-radius:23px;padding:1px;background:conic-gradient(from var(--a,0deg),transparent 0 70%,var(--teal) 80%,var(--mustard) 88%,var(--coral) 94%,transparent 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:border 6s linear infinite;pointer-events:none}
-@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
-@keyframes border{to{--a:360deg}}
+.engine-card{overflow:hidden;isolation:isolate}
+.engine-card::before{content:"";position:absolute;left:50%;top:50%;width:220%;aspect-ratio:1;translate:-50% -50%;background:conic-gradient(from 0deg,transparent 0 70%,var(--teal) 80%,var(--mustard) 88%,var(--coral) 94%,transparent 100%);animation:spin 6s linear infinite;z-index:-2;pointer-events:none;will-change:transform}
+.engine-card::after{content:"";position:absolute;inset:1.5px;border-radius:20.5px;background:rgba(255,255,255,.93);z-index:-1;pointer-events:none}
 .engine-top{display:flex;align-items:center;gap:8px;padding:2px 6px 12px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--faint)}
 .engine-top i{width:11px;height:11px;border-radius:50%;display:inline-block}
 .engine-top .status{margin-left:auto;color:#0d8f83;display:flex;align-items:center;gap:8px}
-.live-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:ping 1.8s infinite}
+.live-dot{position:relative;width:8px;height:8px;border-radius:50%;background:var(--teal)}
+.live-dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:inherit;animation:pingT 1.8s cubic-bezier(.2,.6,.4,1) infinite;will-change:transform,opacity}
+@keyframes pingT{0%{transform:scale(1);opacity:.55}80%,100%{transform:scale(3.2);opacity:0}}
 @keyframes ping{0%{box-shadow:0 0 0 0 rgba(18,179,164,.5)}80%,100%{box-shadow:0 0 0 9px rgba(18,179,164,0)}}
 .engine svg{width:100%;height:auto}
 .engine .node rect{fill:#fff;stroke:var(--line2);stroke-width:1}
@@ -315,8 +319,8 @@ p{margin:0}
 /* process */
 .timeline{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:20px;padding-top:34px}
 .timeline::before{content:"";position:absolute;top:13px;left:0;right:0;height:2px;background:var(--line)}
-.tl-fill{position:absolute;top:13px;left:0;height:2px;width:0;background:var(--text);transition:width 2.4s cubic-bezier(.4,0,.2,1)}
-.timeline.in .tl-fill{width:100%}
+.tl-fill{position:absolute;top:13px;left:0;height:2px;width:100%;background:var(--text);transform:scaleX(0);transform-origin:left;transition:transform 2.4s cubic-bezier(.4,0,.2,1)}
+.timeline.in .tl-fill{transform:scaleX(1)}
 .tl{position:relative}
 .tl::before{content:"";position:absolute;top:-28px;left:0;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--line2);transition:background .3s,border-color .3s}
 .timeline.in .tl::before{background:var(--c);border-color:var(--c);transition-delay:var(--d)}
@@ -370,7 +374,7 @@ p{margin:0}
 
 /* contact */
 .cta-card{position:relative;overflow:hidden;background:var(--ink);color:#fff;border-radius:28px;padding:56px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-.cta-card .dots{background-image:radial-gradient(rgba(255,255,255,.12) 1px,transparent 1.2px);mask-image:radial-gradient(ellipse at 20% 30%,#000 20%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at 20% 30%,#000 20%,transparent 70%)}
+.cta-card .dots{--dot:rgba(255,255,255,.12);mask-image:radial-gradient(ellipse at 20% 30%,#000 20%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at 20% 30%,#000 20%,transparent 70%)}
 .cta-card>*{position:relative;z-index:1}
 .cta-card>.dots{position:absolute;inset:0;z-index:0}
 .cta-card .eyebrow{background:transparent;border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.7)}
@@ -384,7 +388,8 @@ p{margin:0}
 .form-head .lg{width:28px;height:28px}
 .form-head small{display:block;font-weight:400;font-size:12px;opacity:.88}
 .form-head .online{margin-left:auto;font:500 11px var(--mono);background:rgba(255,255,255,.18);padding:4px 9px;border-radius:999px;display:inline-flex;align-items:center;gap:6px}
-.form-head .online::before{content:"";width:7px;height:7px;border-radius:50%;background:#25D366;animation:ping 1.8s infinite}
+.form-head .online::before{content:"";width:7px;height:7px;border-radius:50%;background:#25D366;animation:blinkT 1.8s ease-in-out infinite}
+@keyframes blinkT{0%,100%{opacity:1}50%{opacity:.35}}
 .form-body{padding:22px 22px 24px;display:grid;gap:14px;background:#fff}
 .form label{display:grid;gap:6px;font-weight:600;font-size:13.5px}
 .form input,.form select{font:500 15px var(--body);color:var(--text);border:1px solid var(--line2);border-radius:10px;padding:12px 14px;background:var(--soft);width:100%;transition:border-color .2s,box-shadow .2s,background .2s}
@@ -465,12 +470,12 @@ footer{border-top:1px solid var(--line);padding:36px 0 20px;font-size:14px;color
 
 /* ================= EPIC GLASS BACKGROUND ================= */
 body{background:#f6f4ee}
-.aurora{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:linear-gradient(180deg,#fcfbf7 0%,#f4f1e8 100%)}
+.aurora{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;contain:strict;background:linear-gradient(180deg,#fcfbf7 0%,#f4f1e8 100%)}
 .aurora .b{position:absolute;border-radius:50%;will-change:transform}
-.aurora .b1{width:70vmax;height:70vmax;left:-20vmax;top:-26vmax;background:radial-gradient(circle,rgba(58,160,255,.55),rgba(58,160,255,0) 66%);animation:blobA 28s ease-in-out infinite;translate:calc(var(--mx,0)*50px) calc(var(--my,0)*36px)}
-.aurora .b2{width:60vmax;height:60vmax;right:-18vmax;top:-6vmax;background:radial-gradient(circle,rgba(255,197,49,.62),rgba(255,197,49,0) 66%);animation:blobB 32s ease-in-out infinite;translate:calc(var(--mx,0)*-64px) calc(var(--my,0)*44px)}
-.aurora .b3{width:64vmax;height:64vmax;left:8vmax;bottom:-30vmax;background:radial-gradient(circle,rgba(18,179,164,.45),rgba(18,179,164,0) 66%);animation:blobC 36s ease-in-out infinite;translate:calc(var(--mx,0)*40px) calc(var(--my,0)*-50px)}
-.aurora .b4{width:52vmax;height:52vmax;right:2vmax;bottom:-20vmax;background:radial-gradient(circle,rgba(255,91,87,.42),rgba(255,91,87,0) 66%);animation:blobD 30s ease-in-out infinite;translate:calc(var(--mx,0)*-36px) calc(var(--my,0)*-30px)}
+.aurora .b1{width:70vmax;height:70vmax;left:-20vmax;top:-26vmax;background:radial-gradient(circle,rgba(58,160,255,.55),rgba(58,160,255,0) 66%);animation:blobA 28s ease-in-out infinite}
+.aurora .b2{width:60vmax;height:60vmax;right:-18vmax;top:-6vmax;background:radial-gradient(circle,rgba(255,197,49,.62),rgba(255,197,49,0) 66%);animation:blobB 32s ease-in-out infinite}
+.aurora .b3{width:64vmax;height:64vmax;left:8vmax;bottom:-30vmax;background:radial-gradient(circle,rgba(18,179,164,.45),rgba(18,179,164,0) 66%);animation:blobC 36s ease-in-out infinite}
+.aurora .b4{width:52vmax;height:52vmax;right:2vmax;bottom:-20vmax;background:radial-gradient(circle,rgba(255,91,87,.42),rgba(255,91,87,0) 66%);animation:blobD 30s ease-in-out infinite}
 @keyframes blobA{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(9vmax,7vmax) scale(1.12)}}
 @keyframes blobB{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-8vmax,10vmax) scale(.92)}}
 @keyframes blobC{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(10vmax,-8vmax) scale(1.1)}}
@@ -481,14 +486,13 @@ body{background:#f6f4ee}
 /* sections become see-through so the background shows */
 .hero,.section,.hero .dots{background-color:transparent}
 .section.soft{background:rgba(255,255,255,.4);border-block:1px solid rgba(255,255,255,.75);box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
-.strip{background:rgba(255,255,255,.5);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-block:1px solid rgba(255,255,255,.8)}
+.strip{background:rgba(255,255,255,.62);border-block:1px solid rgba(255,255,255,.8)}
 .track span{background:rgba(255,255,255,.78);border-color:rgba(255,255,255,.9);box-shadow:0 6px 16px -10px rgba(15,14,11,.35)}
-.nav-wrap.scrolled{background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(20px) saturate(1.8);backdrop-filter:blur(20px) saturate(1.8);border-bottom-color:rgba(255,255,255,.8);box-shadow:0 10px 30px -20px rgba(15,14,11,.35)}
+.nav-wrap.scrolled{background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6);border-bottom-color:rgba(255,255,255,.8);box-shadow:0 10px 30px -20px rgba(15,14,11,.35)}
 
 /* frosted glass cards */
 .engine-card,.svc,.fact,.rules li,.pc,.audit,.panel,.board,.browser,.web-steps,.channels,.price-free,.faq details,.kicker,.stats,.chip-float,.eyebrow,.tab[aria-selected="true"]{
-  background:rgba(255,255,255,.55);
-  -webkit-backdrop-filter:blur(18px) saturate(1.7);backdrop-filter:blur(18px) saturate(1.7);
+  background:rgba(255,255,255,.66);
   border-color:rgba(255,255,255,.8);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.35),0 1px 2px rgba(15,14,11,.05),0 22px 44px -24px rgba(15,14,11,.3)}
 .faq details[open]{background:rgba(255,255,255,.75)}
@@ -520,20 +524,48 @@ body{background:#f6f4ee}
 /* the black contact card gets its own glow */
 .cta-card::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(520px 320px at 88% -6%,rgba(58,160,255,.38),transparent 70%),radial-gradient(440px 340px at -4% 104%,rgba(255,197,49,.28),transparent 70%),radial-gradient(380px 280px at 62% 112%,rgba(255,91,87,.28),transparent 70%);animation:glow 12s ease-in-out infinite alternate}
 @keyframes glow{from{opacity:.75}to{opacity:1}}
-.form{background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.6)}
+.form{background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.6)}
 .form-body{background:transparent}
 
 @media (max-width:920px){.o1{left:auto;right:8%;top:84px;width:80px;height:80px}.o3{display:none}}
 @media (max-width:600px){
-  .engine-card,.svc,.fact,.rules li,.pc,.audit,.panel,.board,.browser,.web-steps,.channels,.price-free,.faq details,.kicker,.stats,.chip-float,.eyebrow{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
   .o2{width:90px;height:90px;bottom:10px}
   .aurora .b{opacity:.85}
 }
+
+/* ================= 120HZ MOTION LAYER =================
+   Everything that moves animates only transform / translate / opacity,
+   so the browser runs it on the GPU compositor at the screen's own
+   refresh rate (60, 90, 120 or 144 Hz). */
+html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}.lenis.lenis-stopped{overflow:clip}.lenis.lenis-smooth iframe{pointer-events:none}
+html.lenis,html.lenis-smooth{scroll-behavior:auto!important}
+.track,.chat,.chip-float,.shape,.orb,.rotator span,.lead-card.moving,.tooth{will-change:transform}
+.is-off *:not(.hero-grid>div):not(.orbs),.is-off *::before,.is-off *::after{animation-play-state:paused!important}
+.scroll-progress{position:fixed;left:0;top:0;width:100%;height:2px;z-index:80;background:var(--ink);transform-origin:0 50%;transform:scaleX(0);pointer-events:none;display:none}
+@media (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline: scroll()){
+    .scroll-progress{display:block;animation:progressT linear both;animation-timeline:scroll(root block)}
+    .hero-grid>div:first-child{animation:heroCopyT linear both;animation-timeline:scroll(root block);animation-range:0 90vh}
+    .hero-grid>div:last-child{animation:heroVisT linear both;animation-timeline:scroll(root block);animation-range:0 90vh}
+    .orbs{animation:orbsT linear both;animation-timeline:scroll(root block);animation-range:0 100vh}
+  }
+}
+@keyframes progressT{to{transform:scaleX(1)}}
+@keyframes heroCopyT{to{translate:0 -56px;opacity:.4}}
+@keyframes heroVisT{to{translate:0 -104px}}
+@keyframes orbsT{to{translate:0 -200px}}
+@media (max-width:920px){
+  .orb{-webkit-backdrop-filter:none;backdrop-filter:none}
+  .nav-wrap.scrolled{background:rgba(255,255,255,.84);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  .aurora .b4{display:none}
+}
+@media (hover:none){.svc::after,.pc::after,.fact::after{display:none}}
 </style>
 <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
 <svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="igGrad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FFD600"/><stop offset=".5" stop-color="#FF0069"/><stop offset="1" stop-color="#7638FA"/></linearGradient><clipPath id="xclip"><rect x="-5" y="33" width="130" height="34" rx="17" transform="rotate(38 60 50)"/><rect x="-5" y="33" width="130" height="34" rx="17" transform="rotate(-38 60 50)"/></clipPath><g id="xlogo"><rect x="-5" y="33" width="130" height="34" rx="17" transform="rotate(38 60 50)" fill="none" stroke="#17140d" stroke-width="10"/><rect x="-5" y="33" width="130" height="34" rx="17" transform="rotate(-38 60 50)" fill="none" stroke="#17140d" stroke-width="10"/><g clip-path="url(#xclip)"><rect width="60" height="50" fill="#12b3a4"/><rect x="60" width="60" height="50" fill="#ffc531"/><rect x="60" y="50" width="60" height="50" fill="#ff5b57"/><rect y="50" width="60" height="50" fill="#fff"/></g><path d="M28 80 C42 80,44 52,60 50 S80 22,92 20" fill="none" stroke="#17140d" stroke-width="4"/><circle cx="28" cy="80" r="7" fill="#fff" stroke="#17140d" stroke-width="4"/><circle cx="60" cy="50" r="7" fill="#fff" stroke="#17140d" stroke-width="4"/><circle cx="92" cy="20" r="7" fill="#fff" stroke="#17140d" stroke-width="4"/></g></defs><symbol id="waw" viewBox="0 0 24 24"><title>WhatsApp</title><path fill="#fff" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></symbol><symbol id="wa" viewBox="0 0 24 24"><title>WhatsApp</title><path fill="#25D366" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></symbol><symbol id="ig" viewBox="0 0 24 24"><title>Instagram</title><path fill="url(#igGrad)" d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></symbol><symbol id="meta" viewBox="0 0 24 24"><title>Meta</title><path fill="#0467DF" d="M6.915 4.03c-1.968 0-3.683 1.28-4.871 3.113C.704 9.208 0 11.883 0 14.449c0 .706.07 1.369.21 1.973a6.624 6.624 0 0 0 .265.86 5.297 5.297 0 0 0 .371.761c.696 1.159 1.818 1.927 3.593 1.927 1.497 0 2.633-.671 3.965-2.444.76-1.012 1.144-1.626 2.663-4.32l.756-1.339.186-.325c.061.1.121.196.183.3l2.152 3.595c.724 1.21 1.665 2.556 2.47 3.314 1.046.987 1.992 1.22 3.06 1.22 1.075 0 1.876-.355 2.455-.843a3.743 3.743 0 0 0 .81-.973c.542-.939.861-2.127.861-3.745 0-2.72-.681-5.357-2.084-7.45-1.282-1.912-2.957-2.93-4.716-2.93-1.047 0-2.088.467-3.053 1.308-.652.57-1.257 1.29-1.82 2.05-.69-.875-1.335-1.547-1.958-2.056-1.182-.966-2.315-1.303-3.454-1.303zm10.16 2.053c1.147 0 2.188.758 2.992 1.999 1.132 1.748 1.647 4.195 1.647 6.4 0 1.548-.368 2.9-1.839 2.9-.58 0-1.027-.23-1.664-1.004-.496-.601-1.343-1.878-2.832-4.358l-.617-1.028a44.908 44.908 0 0 0-1.255-1.98c.07-.109.141-.224.211-.327 1.12-1.667 2.118-2.602 3.358-2.602zm-10.201.553c1.265 0 2.058.791 2.675 1.446.307.327.737.871 1.234 1.579l-1.02 1.566c-.757 1.163-1.882 3.017-2.837 4.338-1.191 1.649-1.81 1.817-2.486 1.817-.524 0-1.038-.237-1.383-.794-.263-.426-.464-1.13-.464-2.046 0-2.221.63-4.535 1.66-6.088.454-.687.964-1.226 1.533-1.533a2.264 2.264 0 0 1 1.088-.285z"/></symbol><symbol id="gads" viewBox="0 0 24 24"><title>Google Ads</title><path fill="#4285F4" d="M3.9998 22.9291C1.7908 22.9291 0 21.1383 0 18.9293s1.7908-3.9998 3.9998-3.9998 3.9998 1.7908 3.9998 3.9998-1.7908 3.9998-3.9998 3.9998zm19.4643-6.0004L15.4632 3.072C14.3586 1.1587 11.9121.5028 9.9988 1.6074S7.4295 5.1585 8.5341 7.0718l8.0009 13.8567c1.1046 1.9133 3.5511 2.5679 5.4644 1.4646 1.9134-1.1046 2.568-3.5511 1.4647-5.4644zM7.5137 4.8438L1.5645 15.1484A4.5 4.5 0 0 1 4 14.4297c2.5597-.0075 4.6248 2.1585 4.4941 4.7148l3.2168-5.5723-3.6094-6.25c-.4499-.7793-.6322-1.6394-.5878-2.4784z"/></symbol><symbol id="google" viewBox="0 0 24 24"><title>Google</title><path fill="#4285F4" d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/></symbol><symbol id="sheets" viewBox="0 0 24 24"><title>Google Sheets</title><path fill="#34A853" d="M11.318 12.545H7.91v-1.909h3.41v1.91zM14.728 0v6h6l-6-6zm1.363 10.636h-3.41v1.91h3.41v-1.91zm0 3.273h-3.41v1.91h3.41v-1.91zM20.727 6.5v15.864c0 .904-.732 1.636-1.636 1.636H4.909a1.636 1.636 0 0 1-1.636-1.636V1.636C3.273.732 4.005 0 4.909 0h9.318v6.5h6.5zm-3.273 2.773H6.545v7.909h10.91v-7.91zm-6.136 4.636H7.91v1.91h3.41v-1.91z"/></symbol><symbol id="gcal" viewBox="0 0 24 24"><title>Google Calendar</title><path fill="#4285F4" d="M18.316 5.684H24v12.632h-5.684V5.684zM5.684 24h12.632v-5.684H5.684V24zM18.316 5.684V0H1.895A1.894 1.894 0 0 0 0 1.895v16.421h5.684V5.684h12.632zm-7.207 6.25v-.065c.272-.144.5-.349.687-.617s.279-.595.279-.982c0-.379-.099-.72-.3-1.025a2.05 2.05 0 0 0-.832-.714 2.703 2.703 0 0 0-1.197-.257c-.6 0-1.094.156-1.481.467-.386.311-.65.671-.793 1.078l1.085.452c.086-.249.224-.461.413-.633.189-.172.445-.257.767-.257.33 0 .602.088.816.264a.86.86 0 0 1 .322.703c0 .33-.12.589-.36.778-.24.19-.535.284-.886.284h-.567v1.085h.633c.407 0 .748.109 1.02.327.272.218.407.499.407.843 0 .336-.129.614-.387.832s-.565.327-.924.327c-.351 0-.651-.103-.897-.311-.248-.208-.422-.502-.521-.881l-1.096.452c.178.616.505 1.082.977 1.401.472.319.984.478 1.538.477a2.84 2.84 0 0 0 1.293-.291c.382-.193.684-.458.902-.794.218-.336.327-.72.327-1.149 0-.429-.115-.797-.344-1.105a2.067 2.067 0 0 0-.881-.689zm2.093-1.931l.602.913L15 10.045v5.744h1.187V8.446h-.827l-2.158 1.557zM22.105 0h-3.289v5.184H24V1.895A1.894 1.894 0 0 0 22.105 0zm-3.289 23.5l4.684-4.684h-4.684V23.5zM0 22.105C0 23.152.848 24 1.895 24h3.289v-5.184H0v3.289z"/></symbol><symbol id="gmail" viewBox="0 0 24 24"><title>Gmail</title><path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></symbol><symbol id="n8n" viewBox="0 0 24 24"><title>n8n</title><path fill="#EA4B71" d="M4.8 16.8c.45 0 .6-.15.6-.6V15c0-1.8.6-2.4 2.4-2.4H9c1.8 0 2.4.6 2.4 2.4v1.2c0 .45.15.6.6.6s.6-.15.6-.6V15c0-1.8.6-2.4 2.4-2.4h1.2c1.8 0 2.4.6 2.4 2.4v1.2c0 .45.15.6.6.6s.6-.15.6-.6V15c0-1.8.6-2.4 2.4-2.4h1.2c.45 0 .6-.15.6-.6s-.15-.6-.6-.6h-1.2c-1.8 0-2.4-.6-2.4-2.4V7.8c0-.45-.15-.6-.6-.6s-.6.15-.6.6V9c0 1.8-.6 2.4-2.4 2.4H15c-1.8 0-2.4-.6-2.4-2.4V7.8c0-.45-.15-.6-.6-.6s-.6.15-.6.6V9c0 1.8-.6 2.4-2.4 2.4H7.8c-1.8 0-2.4-.6-2.4-2.4V7.8c0-.45-.15-.6-.6-.6s-.6.15-.6.6V9c0 1.8-.6 2.4-2.4 2.4H.6c-.45 0-.6.15-.6.6s.15.6.6.6h1.2c1.8 0 2.4.6 2.4 2.4v1.2c0 .45.15.6.6.6"/></symbol><symbol id="cal" viewBox="0 0 24 24"><title>Cal.com</title><path fill="#292929" d="M2.408 14.488C1.035 14.488 0 13.4 0 12.058c0-1.346.982-2.443 2.408-2.443.758 0 1.282.233 1.691.765l-.66.55a1.343 1.343 0 0 0-1.03-.442c-.93 0-1.44.711-1.44 1.57 0 .86.559 1.557 1.44 1.557.413 0 .765-.147 1.043-.443l.651.573c-.391.51-.929.743-1.695.743zM6.948 10.913h.89v3.49h-.89v-.51c-.185.362-.493.604-1.083.604-.943 0-1.695-.82-1.695-1.826 0-1.007.752-1.825 1.695-1.825.585 0 .898.241 1.083.604zm.026 1.758c0-.546-.374-.998-.964-.998-.568 0-.938.457-.938.998 0 .528.37.998.938.998.586 0 .964-.456.964-.998zM8.467 9.503h.89v4.895h-.89zM9.752 13.937a.53.53 0 0 1 .542-.528c.313 0 .533.242.533.528a.527.527 0 0 1-.533.537.534.534 0 0 1-.542-.537zM14.23 13.839c-.33.403-.832.658-1.426.658a1.806 1.806 0 0 1-1.84-1.826c0-1.007.778-1.825 1.84-1.825.572 0 1.07.241 1.4.622l-.687.577c-.172-.215-.396-.376-.713-.376-.568 0-.938.456-.938.998 0 .541.37.997.938.997.343 0 .58-.179.757-.42zM14.305 12.671c0-1.007.78-1.825 1.84-1.825 1.061 0 1.84.818 1.84 1.825 0 1.007-.779 1.826-1.84 1.826-1.06-.005-1.84-.82-1.84-1.826zm2.778 0c0-.546-.37-.998-.938-.998-.568-.004-.937.452-.937.998 0 .542.37.998.937.998.568 0 .938-.456.938-.998zM24 12.269v2.13h-.89v-1.911c0-.604-.281-.864-.704-.864-.396 0-.678.197-.678.864v1.91h-.89v-1.91c0-.604-.285-.864-.704-.864-.396 0-.744.197-.744.864v1.91h-.89v-3.49h.89v.484c.185-.376.52-.564 1.035-.564.489 0 .898.241 1.123.649.224-.417.554-.65 1.153-.65.731.005 1.299.56 1.299 1.442z"/></symbol></svg>
+<div class="scroll-progress" aria-hidden="true"></div>
 <div class="aurora" aria-hidden="true"><i class="b b1"></i><i class="b b2"></i><i class="b b3"></i><i class="b b4"></i><span class="grid"></span><span class="noise"></span></div>
 
 <!-- ================= NAV ================= -->
@@ -1007,6 +1039,9 @@ body{background:#f6f4ee}
   <div class="container wm">buildxharshal</div>
 </footer>
 
+<script>/*! Lenis 1.1.20 | MIT License | (c) darkroom.engineering | https://github.com/darkroomengineering/lenis */
+function t(t,i,e){return Math.max(t,Math.min(i,e))}var i=class{isRunning=!1;value=0;from=0;to=0;currentTime=0;lerp;duration;easing;onUpdate;advance(i){if(!this.isRunning)return;let e=!1;if(this.duration&&this.easing){this.currentTime+=i;const s=t(0,this.currentTime/this.duration,1);e=s>=1;const o=e?1:this.easing(s);this.value=this.from+(this.to-this.from)*o}else this.lerp?(this.value=function(t,i,e,s){return function(t,i,e){return(1-e)*t+e*i}(t,i,1-Math.exp(-e*s))}(this.value,this.to,60*this.lerp,i),Math.round(this.value)===this.to&&(this.value=this.to,e=!0)):(this.value=this.to,e=!0);e&&this.stop(),this.onUpdate?.(this.value,e)}stop(){this.isRunning=!1}fromTo(t,i,{lerp:e,duration:s,easing:o,onStart:n,onUpdate:r}){this.from=this.value=t,this.to=i,this.lerp=e,this.duration=s,this.easing=o,this.currentTime=0,this.isRunning=!0,n?.(),this.onUpdate=r}};var e=class{constructor(t,i,{autoResize:e=!0,debounce:s=250}={}){this.wrapper=t,this.content=i,e&&(this.debouncedResize=function(t,i){let e;return function(...s){let o=this;clearTimeout(e),e=setTimeout((()=>{e=void 0,t.apply(o,s)}),i)}}(this.resize,s),this.wrapper instanceof Window?window.addEventListener("resize",this.debouncedResize,!1):(this.wrapperResizeObserver=new ResizeObserver(this.debouncedResize),this.wrapperResizeObserver.observe(this.wrapper)),this.contentResizeObserver=new ResizeObserver(this.debouncedResize),this.contentResizeObserver.observe(this.content)),this.resize()}width=0;height=0;scrollHeight=0;scrollWidth=0;debouncedResize;wrapperResizeObserver;contentResizeObserver;destroy(){this.wrapperResizeObserver?.disconnect(),this.contentResizeObserver?.disconnect(),this.wrapper===window&&this.debouncedResize&&window.removeEventListener("resize",this.debouncedResize,!1)}resize=()=>{this.onWrapperResize(),this.onContentResize()};onWrapperResize=()=>{this.wrapper instanceof Window?(this.width=window.innerWidth,this.height=window.innerHeight):(this.width=this.wrapper.clientWidth,this.height=this.wrapper.clientHeight)};onContentResize=()=>{this.wrapper instanceof Window?(this.scrollHeight=this.content.scrollHeight,this.scrollWidth=this.content.scrollWidth):(this.scrollHeight=this.wrapper.scrollHeight,this.scrollWidth=this.wrapper.scrollWidth)};get limit(){return{x:this.scrollWidth-this.width,y:this.scrollHeight-this.height}}},s=class{events={};emit(t,...i){let e=this.events[t]||[];for(let t=0,s=e.length;t<s;t++)e[t]?.(...i)}on(t,i){return this.events[t]?.push(i)||(this.events[t]=[i]),()=>{this.events[t]=this.events[t]?.filter((t=>i!==t))}}off(t,i){this.events[t]=this.events[t]?.filter((t=>i!==t))}destroy(){this.events={}}},o=100/6,n={passive:!1},r=class{constructor(t,i={wheelMultiplier:1,touchMultiplier:1}){this.element=t,this.options=i,window.addEventListener("resize",this.onWindowResize,!1),this.onWindowResize(),this.element.addEventListener("wheel",this.onWheel,n),this.element.addEventListener("touchstart",this.onTouchStart,n),this.element.addEventListener("touchmove",this.onTouchMove,n),this.element.addEventListener("touchend",this.onTouchEnd,n)}touchStart={x:0,y:0};lastDelta={x:0,y:0};window={width:0,height:0};emitter=new s;on(t,i){return this.emitter.on(t,i)}destroy(){this.emitter.destroy(),window.removeEventListener("resize",this.onWindowResize,!1),this.element.removeEventListener("wheel",this.onWheel,n),this.element.removeEventListener("touchstart",this.onTouchStart,n),this.element.removeEventListener("touchmove",this.onTouchMove,n),this.element.removeEventListener("touchend",this.onTouchEnd,n)}onTouchStart=t=>{const{clientX:i,clientY:e}=t.targetTouches?t.targetTouches[0]:t;this.touchStart.x=i,this.touchStart.y=e,this.lastDelta={x:0,y:0},this.emitter.emit("scroll",{deltaX:0,deltaY:0,event:t})};onTouchMove=t=>{const{clientX:i,clientY:e}=t.targetTouches?t.targetTouches[0]:t,s=-(i-this.touchStart.x)*this.options.touchMultiplier,o=-(e-this.touchStart.y)*this.options.touchMultiplier;this.touchStart.x=i,this.touchStart.y=e,this.lastDelta={x:s,y:o},this.emitter.emit("scroll",{deltaX:s,deltaY:o,event:t})};onTouchEnd=t=>{this.emitter.emit("scroll",{deltaX:this.lastDelta.x,deltaY:this.lastDelta.y,event:t})};onWheel=t=>{let{deltaX:i,deltaY:e,deltaMode:s}=t;i*=1===s?o:2===s?this.window.width:1,e*=1===s?o:2===s?this.window.height:1,i*=this.options.wheelMultiplier,e*=this.options.wheelMultiplier,this.emitter.emit("scroll",{deltaX:i,deltaY:e,event:t})};onWindowResize=()=>{this.window={width:window.innerWidth,height:window.innerHeight}}},Lenis=class{_isScrolling=!1;_isStopped=!1;_isLocked=!1;_preventNextNativeScrollEvent=!1;_resetVelocityTimeout=null;__rafID=null;isTouching;time=0;userData={};lastVelocity=0;velocity=0;direction=0;options;targetScroll;animatedScroll;animate=new i;emitter=new s;dimensions;virtualScroll;constructor({wrapper:t=window,content:i=document.documentElement,eventsTarget:s=t,smoothWheel:o=!0,syncTouch:n=!1,syncTouchLerp:l=.075,touchInertiaMultiplier:h=35,duration:a,easing:c=t=>Math.min(1,1.001-Math.pow(2,-10*t)),lerp:p=.1,infinite:d=!1,orientation:u="vertical",gestureOrientation:m="vertical",touchMultiplier:v=1,wheelMultiplier:S=1,autoResize:w=!0,prevent:g,virtualScroll:f,overscroll:y=!0,autoRaf:E=!1,anchors:T=!1,__experimental__naiveDimensions:z=!1}={}){window.lenisVersion="1.1.20",t&&t!==document.documentElement||(t=window),this.options={wrapper:t,content:i,eventsTarget:s,smoothWheel:o,syncTouch:n,syncTouchLerp:l,touchInertiaMultiplier:h,duration:a,easing:c,lerp:p,infinite:d,gestureOrientation:m,orientation:u,touchMultiplier:v,wheelMultiplier:S,autoResize:w,prevent:g,virtualScroll:f,overscroll:y,autoRaf:E,anchors:T,__experimental__naiveDimensions:z},this.dimensions=new e(t,i,{autoResize:w}),this.updateClassName(),this.targetScroll=this.animatedScroll=this.actualScroll,this.options.wrapper.addEventListener("scroll",this.onNativeScroll,!1),this.options.wrapper.addEventListener("scrollend",this.onScrollEnd,{capture:!0}),this.options.anchors&&this.options.wrapper===window&&this.options.wrapper.addEventListener("click",this.onClick,!1),this.options.wrapper.addEventListener("pointerdown",this.onPointerDown,!1),this.virtualScroll=new r(s,{touchMultiplier:v,wheelMultiplier:S}),this.virtualScroll.on("scroll",this.onVirtualScroll),this.options.autoRaf&&(this.__rafID=requestAnimationFrame(this.raf))}destroy(){this.emitter.destroy(),this.options.wrapper.removeEventListener("scroll",this.onNativeScroll,!1),this.options.wrapper.removeEventListener("scrollend",this.onScrollEnd,{capture:!0}),this.options.wrapper.removeEventListener("pointerdown",this.onPointerDown,!1),this.options.anchors&&this.options.wrapper===window&&this.options.wrapper.removeEventListener("click",this.onClick,!1),this.virtualScroll.destroy(),this.dimensions.destroy(),this.cleanUpClassName(),this.__rafID&&cancelAnimationFrame(this.__rafID)}on(t,i){return this.emitter.on(t,i)}off(t,i){return this.emitter.off(t,i)}onScrollEnd=t=>{t instanceof CustomEvent||"smooth"!==this.isScrolling&&!1!==this.isScrolling||t.stopPropagation()};dispatchScrollendEvent=()=>{this.options.wrapper.dispatchEvent(new CustomEvent("scrollend",{bubbles:this.options.wrapper===window,detail:{lenisScrollEnd:!0}}))};setScroll(t){this.isHorizontal?this.options.wrapper.scrollTo({left:t,behavior:"instant"}):this.options.wrapper.scrollTo({top:t,behavior:"instant"})}onClick=t=>{const i=t.composedPath().find((t=>t instanceof HTMLAnchorElement&&t.getAttribute("href")?.startsWith("#")));if(i){const t=i.getAttribute("href");if(t){const i="object"==typeof this.options.anchors&&this.options.anchors?this.options.anchors:void 0;this.scrollTo(t,i)}}};onPointerDown=t=>{1===t.button&&this.reset()};onVirtualScroll=t=>{if("function"==typeof this.options.virtualScroll&&!1===this.options.virtualScroll(t))return;const{deltaX:i,deltaY:e,event:s}=t;if(this.emitter.emit("virtual-scroll",{deltaX:i,deltaY:e,event:s}),s.ctrlKey)return;if(s.lenisStopPropagation)return;const o=s.type.includes("touch"),n=s.type.includes("wheel");this.isTouching="touchstart"===s.type||"touchmove"===s.type;const r=0===i&&0===e;if(this.options.syncTouch&&o&&"touchstart"===s.type&&r&&!this.isStopped&&!this.isLocked)return void this.reset();const l="vertical"===this.options.gestureOrientation&&0===e||"horizontal"===this.options.gestureOrientation&&0===i;if(r||l)return;let h=s.composedPath();h=h.slice(0,h.indexOf(this.rootElement));const a=this.options.prevent;if(h.find((t=>t instanceof HTMLElement&&("function"==typeof a&&a?.(t)||t.hasAttribute?.("data-lenis-prevent")||o&&t.hasAttribute?.("data-lenis-prevent-touch")||n&&t.hasAttribute?.("data-lenis-prevent-wheel")))))return;if(this.isStopped||this.isLocked)return void s.preventDefault();if(!(this.options.syncTouch&&o||this.options.smoothWheel&&n))return this.isScrolling="native",this.animate.stop(),void(s.lenisStopPropagation=!0);let c=e;"both"===this.options.gestureOrientation?c=Math.abs(e)>Math.abs(i)?e:i:"horizontal"===this.options.gestureOrientation&&(c=i),(!this.options.overscroll||this.options.infinite||this.options.wrapper!==window&&(this.animatedScroll>0&&this.animatedScroll<this.limit||0===this.animatedScroll&&e>0||this.animatedScroll===this.limit&&e<0))&&(s.lenisStopPropagation=!0),s.preventDefault();const p=o&&this.options.syncTouch,d=o&&"touchend"===s.type&&Math.abs(c)>5;d&&(c=this.velocity*this.options.touchInertiaMultiplier),this.scrollTo(this.targetScroll+c,{programmatic:!1,...p?{lerp:d?this.options.syncTouchLerp:1}:{lerp:this.options.lerp,duration:this.options.duration,easing:this.options.easing}})};resize(){this.dimensions.resize(),this.animatedScroll=this.targetScroll=this.actualScroll,this.emit()}emit(){this.emitter.emit("scroll",this)}onNativeScroll=()=>{if(null!==this._resetVelocityTimeout&&(clearTimeout(this._resetVelocityTimeout),this._resetVelocityTimeout=null),this._preventNextNativeScrollEvent)this._preventNextNativeScrollEvent=!1;else if(!1===this.isScrolling||"native"===this.isScrolling){const t=this.animatedScroll;this.animatedScroll=this.targetScroll=this.actualScroll,this.lastVelocity=this.velocity,this.velocity=this.animatedScroll-t,this.direction=Math.sign(this.animatedScroll-t),this.isStopped||(this.isScrolling="native"),this.emit(),0!==this.velocity&&(this._resetVelocityTimeout=setTimeout((()=>{this.lastVelocity=this.velocity,this.velocity=0,this.isScrolling=!1,this.emit()}),400))}};reset(){this.isLocked=!1,this.isScrolling=!1,this.animatedScroll=this.targetScroll=this.actualScroll,this.lastVelocity=this.velocity=0,this.animate.stop()}start(){this.isStopped&&(this.reset(),this.isStopped=!1)}stop(){this.isStopped||(this.reset(),this.isStopped=!0)}raf=t=>{const i=t-(this.time||t);this.time=t,this.animate.advance(.001*i),this.options.autoRaf&&(this.__rafID=requestAnimationFrame(this.raf))};scrollTo(i,{offset:e=0,immediate:s=!1,lock:o=!1,duration:n=this.options.duration,easing:r=this.options.easing,lerp:l=this.options.lerp,onStart:h,onComplete:a,force:c=!1,programmatic:p=!0,userData:d}={}){if(!this.isStopped&&!this.isLocked||c){if("string"==typeof i&&["top","left","start"].includes(i))i=0;else if("string"==typeof i&&["bottom","right","end"].includes(i))i=this.limit;else{let t;if("string"==typeof i?t=document.querySelector(i):i instanceof HTMLElement&&i?.nodeType&&(t=i),t){if(this.options.wrapper!==window){const t=this.rootElement.getBoundingClientRect();e-=this.isHorizontal?t.left:t.top}const s=t.getBoundingClientRect();i=(this.isHorizontal?s.left:s.top)+this.animatedScroll}}if("number"==typeof i){if(i+=e,i=Math.round(i),this.options.infinite?p&&(this.targetScroll=this.animatedScroll=this.scroll):i=t(0,i,this.limit),i===this.targetScroll)return h?.(this),void a?.(this);if(this.userData=d??{},s)return this.animatedScroll=this.targetScroll=i,this.setScroll(this.scroll),this.reset(),this.preventNextNativeScrollEvent(),this.emit(),a?.(this),this.userData={},void requestAnimationFrame((()=>{this.dispatchScrollendEvent()}));p||(this.targetScroll=i),this.animate.fromTo(this.animatedScroll,i,{duration:n,easing:r,lerp:l,onStart:()=>{o&&(this.isLocked=!0),this.isScrolling="smooth",h?.(this)},onUpdate:(t,i)=>{this.isScrolling="smooth",this.lastVelocity=this.velocity,this.velocity=t-this.animatedScroll,this.direction=Math.sign(this.velocity),this.animatedScroll=t,this.setScroll(this.scroll),p&&(this.targetScroll=t),i||this.emit(),i&&(this.reset(),this.emit(),a?.(this),this.userData={},requestAnimationFrame((()=>{this.dispatchScrollendEvent()})),this.preventNextNativeScrollEvent())}})}}}preventNextNativeScrollEvent(){this._preventNextNativeScrollEvent=!0,requestAnimationFrame((()=>{this._preventNextNativeScrollEvent=!1}))}get rootElement(){return this.options.wrapper===window?document.documentElement:this.options.wrapper}get limit(){return this.options.__experimental__naiveDimensions?this.isHorizontal?this.rootElement.scrollWidth-this.rootElement.clientWidth:this.rootElement.scrollHeight-this.rootElement.clientHeight:this.dimensions.limit[this.isHorizontal?"x":"y"]}get isHorizontal(){return"horizontal"===this.options.orientation}get actualScroll(){const t=this.options.wrapper;return this.isHorizontal?t.scrollX??t.scrollLeft:t.scrollY??t.scrollTop}get scroll(){return this.options.infinite?(t=this.animatedScroll,i=this.limit,(t%i+i)%i):this.animatedScroll;var t,i}get progress(){return 0===this.limit?1:this.scroll/this.limit}get isScrolling(){return this._isScrolling}set isScrolling(t){this._isScrolling!==t&&(this._isScrolling=t,this.updateClassName())}get isStopped(){return this._isStopped}set isStopped(t){this._isStopped!==t&&(this._isStopped=t,this.updateClassName())}get isLocked(){return this._isLocked}set isLocked(t){this._isLocked!==t&&(this._isLocked=t,this.updateClassName())}get isSmooth(){return"smooth"===this.isScrolling}get className(){let t="lenis";return this.isStopped&&(t+=" lenis-stopped"),this.isLocked&&(t+=" lenis-locked"),this.isScrolling&&(t+=" lenis-scrolling"),"smooth"===this.isScrolling&&(t+=" lenis-smooth"),t}updateClassName(){this.cleanUpClassName(),this.rootElement.className=`${this.rootElement.className} ${this.className}`.trim()}cleanUpClassName(){this.rootElement.className=this.rootElement.className.replace(/lenis(-\w+)?/g,"").trim()}};globalThis.Lenis=Lenis,globalThis.Lenis.prototype=Lenis.prototype;
+</script>
 <script>
 /* ===== Contact settings ===== */
 const CONFIG = {
@@ -1034,6 +1069,7 @@ const rot=[...document.querySelectorAll('#rotator span')];let ri=0;
 setInterval(()=>{const cur=rot[ri];cur.classList.remove('on');cur.classList.add('out');ri=(ri+1)%rot.length;const nx=rot[ri];nx.classList.remove('out');void nx.offsetWidth;nx.classList.add('on');setTimeout(()=>cur.classList.remove('out'),650)},2600);
 
 /* WhatsApp chat demo */
+let heroVisible=true;
 const chat=document.getElementById('chat');
 const now=()=>new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
 const runChat=()=>{
@@ -1043,7 +1079,7 @@ const runChat=()=>{
   let t;setTimeout(()=>{t=add('<i></i><i></i><i></i>','msg out typing')},1300);
   setTimeout(()=>{t.remove();add(`Yes! Here is the brochure and this week's demo class slots.<small>${now()} ✓✓</small>`,'msg out')},2500);
 };
-runChat();setInterval(runChat,7000);
+runChat();setInterval(()=>{if(heroVisible&&!document.hidden)runChat()},7000);
 
 /* live log */
 const logEl=document.getElementById('log');
@@ -1062,7 +1098,7 @@ const events=[
 let li=0;
 const ts=()=>new Date().toTimeString().slice(0,8);
 const addLog=()=>{const [ev,meta]=events[li%events.length];li++;const el=document.createElement('li');el.innerHTML=`<span>${ts()}</span> <span class="ev">${ev.padEnd(19,' ').replace(/ /g,'&nbsp;')}</span>${meta}`;logEl.appendChild(el);while(logEl.children.length>6)logEl.firstElementChild.remove()};
-for(let i=0;i<5;i++)addLog();setInterval(addLog,1700);
+for(let i=0;i<5;i++)addLog();setInterval(()=>{if(heroVisible&&!document.hidden)addLog()},1700);
 
 /* industries */
 const IND=[
@@ -1128,16 +1164,49 @@ form.addEventListener('submit',e=>{
   form.reset();
 });
 document.getElementById('yr').textContent=new Date().getFullYear();
-/* cursor parallax for the background and spotlight on cards */
-if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
-  let raf=0,px=0,py=0;
+/* ===== 120Hz motion ===== */
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const FINE=matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+/* Smooth wheel scrolling on laptops/desktops (Lenis). Time-based damping, so it
+   feels identical at 60, 120 or 144 Hz. Touch screens keep native scrolling,
+   which the OS already runs at the display's full refresh rate. */
+if(window.Lenis&&FINE&&!REDUCE){
+  window.lenis=new Lenis({lerp:0.1,smoothWheel:true,syncTouch:false,wheelMultiplier:1,anchors:{offset:-84},autoRaf:true});
+}
+
+/* Pointer parallax: eased per frame with real elapsed time, written straight
+   onto the moving layers (no page-wide style recalculation). */
+if(FINE&&!REDUCE){
+  const layers=[...document.querySelectorAll('.aurora .b')].map((el,i)=>({el,dx:[50,-64,40,-36][i],dy:[36,44,-50,-30][i]}));
+  document.querySelectorAll('.orb').forEach((el,i)=>layers.push({el,dx:[-18,24,-12][i],dy:[-14,18,-10][i]}));
+  let tx=0,ty=0,cx=0,cy=0,running=false,last=0;
+  const tick=now=>{
+    const dt=last?Math.min(64,now-last):16.7;last=now;
+    const k=1-Math.exp(-dt/140);
+    cx+=(tx-cx)*k;cy+=(ty-cy)*k;
+    for(const l of layers)l.el.style.translate=(cx*l.dx).toFixed(2)+'px '+(cy*l.dy).toFixed(2)+'px';
+    if(Math.abs(tx-cx)>.0004||Math.abs(ty-cy)>.0004)requestAnimationFrame(tick);else{running=false;last=0}
+  };
+  let spot=null,sx=0,sy=0,spotQ=false;
   addEventListener('pointermove',e=>{
-    px=(e.clientX/innerWidth-.5)*2;py=(e.clientY/innerHeight-.5)*2;
-    if(!raf)raf=requestAnimationFrame(()=>{raf=0;const s=document.documentElement.style;s.setProperty('--mx',px.toFixed(3));s.setProperty('--my',py.toFixed(3))});
+    tx=(e.clientX/innerWidth-.5)*2;ty=(e.clientY/innerHeight-.5)*2;
+    if(!running){running=true;requestAnimationFrame(tick)}
     const c=e.target.closest&&e.target.closest('.svc,.pc,.fact');
-    if(c){const r=c.getBoundingClientRect();c.style.setProperty('--x',(e.clientX-r.left)+'px');c.style.setProperty('--y',(e.clientY-r.top)+'px')}
+    if(c){spot=c;sx=e.clientX;sy=e.clientY;if(!spotQ){spotQ=true;requestAnimationFrame(()=>{spotQ=false;const r=spot.getBoundingClientRect();spot.style.setProperty('--x',(sx-r.left)+'px');spot.style.setProperty('--y',(sy-r.top)+'px')})}}
   },{passive:true});
 }
+
+/* Pause looping animations that are off screen, so the GPU only works on what you see. */
+(()=>{
+  const svg=document.querySelector('.engine svg');
+  const off=new IntersectionObserver(es=>es.forEach(e=>{
+    const hidden=!e.isIntersecting;
+    e.target.classList.toggle('is-off',hidden);
+    if(e.target.classList.contains('hero')){heroVisible=!hidden;if(svg&&svg.pauseAnimations){hidden?svg.pauseAnimations():svg.unpauseAnimations()}}
+  }),{rootMargin:'120px 0px'});
+  document.querySelectorAll('.hero,.strip,#work,#contact').forEach(el=>off.observe(el));
+})();
 
 </script>
 </body>
